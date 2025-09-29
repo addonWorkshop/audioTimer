@@ -87,7 +87,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     f"{timer.config.repeat_count} / {timer.config.repeat_limit}"
                 )
                 next_round_component.append(f"({repeat_count_info})")
-                components.append(" ".join(next_round_component))
+            components.append(" ".join(next_round_component))
         elif timer.recurrent_notification_active:
             timer.stop_recurrent_notification()
             components.append(_("Recurrent notification stopped"))
