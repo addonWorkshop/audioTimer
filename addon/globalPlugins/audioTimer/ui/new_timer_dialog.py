@@ -61,9 +61,15 @@ class NewTimerDialog(wx.Dialog):
         self.refresh()
 
     def refresh(self):
+        repeat_limit = self.repeat_limit_field.GetValue()
+        (
+            self.restart_policy_choice.Hide()
+            if repeat_limit == 1
+            else self.restart_policy_choice.Show()
+        )
         (
             self.remove_after_last_repeat_cb.Hide()
-            if self.repeat_limit_field.GetValue() == 0
+            if repeat_limit == 0
             else self.remove_after_last_repeat_cb.Show()
         )
         notification_type = self.notification_type_choice.GetClientData(
