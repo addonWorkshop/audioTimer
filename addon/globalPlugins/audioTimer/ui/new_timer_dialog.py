@@ -1,5 +1,3 @@
-import sys
-
 import wx
 from gui.guiHelper import BoxSizerHelper
 
@@ -10,6 +8,8 @@ from ..timer_manager import TimerManager
 MINUTE = 60
 HOUR = MINUTE * 60
 
+MAX_SIZE = 2**31 - 1
+
 
 class NewTimerDialog(wx.Dialog):
     def __init__(self, parent, timer_manager: TimerManager):
@@ -17,7 +17,7 @@ class NewTimerDialog(wx.Dialog):
         self.timer_manager = timer_manager
         self.main_sizer = BoxSizerHelper(self, wx.VERTICAL)
         self.hours_field = self.main_sizer.addLabeledControl(
-            _("Hours"), wx.SpinCtrl, min=0, max=sys.maxsize
+            _("Hours"), wx.SpinCtrl, min=0, max=MAX_SIZE
         )
         self.minutes_field = self.main_sizer.addLabeledControl(
             _("Minutes"), wx.SpinCtrl, min=0, max=59
@@ -26,7 +26,7 @@ class NewTimerDialog(wx.Dialog):
             _("Seconds"), wx.SpinCtrl, min=0, max=59
         )
         self.repeat_limit_field = self.main_sizer.addLabeledControl(
-            _("Repeat limit (0 unlimited)"), wx.SpinCtrl, min=0, max=sys.maxsize
+            _("Repeat limit (0 unlimited)"), wx.SpinCtrl, min=0, max=MAX_SIZE
         )
         self.repeat_limit_field.Bind(wx.EVT_SPINCTRL, self.on_repeat_limit_changed)
         self.notification_type_choice = self.main_sizer.addLabeledControl(
