@@ -87,6 +87,13 @@ class NewTimerDialog(wx.Dialog):
             + self.minutes_field.GetValue() * MINUTE
             + self.seconds_field.GetValue()
         )
+        if interval == 0:
+            wx.MessageBox(
+                _("The hours, minutes or seconds must be greater than 0"),
+                _("Error"),
+                wx.OK | wx.ICON_ERROR,
+            )
+            return
         finish_action = (
             TimerFinishAction.REMOVE
             if self.remove_after_last_repeat_cb.GetValue()
