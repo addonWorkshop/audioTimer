@@ -1,10 +1,10 @@
 from pathlib import Path
 
-import nvwave
+from .player import Player
 
 
 def play_sound(file_path: Path):
-    nvwave.playWaveFile(str(file_path), asynchronous=True)
+    Player.play_file(file_path)
 
 
 def format_time(seconds: int) -> str:
