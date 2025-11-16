@@ -3,6 +3,7 @@ from pathlib import Path
 
 import addonHandler
 import globalPluginHandler
+import gui
 import NVDAState
 from scriptHandler import getLastScriptRepeatCount, script
 from ui import message
@@ -11,6 +12,8 @@ from .enums import TimerState
 from .repository import TimerRepository
 from .timer_manager import TimerManager
 from .ui.main_dialog import MainDialog
+from .ui.new_timer_dialog import NewTimerDialog
+from .ui.utils import show_dialog
 from .utils import format_time
 
 addonHandler.initTranslation()
@@ -98,3 +101,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.timer_manager.update_timer(timer)
         message(", ".join(components))
         self._last_nearest_timer = None
+
+    @script(description=_("Add timer"))
+    def script_add_timer(self, event):
+        show_dialog(NewTimerDialog, gui.mainFrame, self.timer_manager)

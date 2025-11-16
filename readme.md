@@ -38,6 +38,9 @@ When pressed twice, it will change timer state according to the current timer st
 3. Otherwise, timer will be disabled.
 
 ## Change log
+### 0.9.0
+Added ability to add new timer by gesture directly (as in 0.7).
+
 ### 0.8
 Addon rewritten and reworked.
 
