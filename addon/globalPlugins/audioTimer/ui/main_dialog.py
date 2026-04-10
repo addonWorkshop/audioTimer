@@ -63,6 +63,8 @@ class MainDialog(wx.Dialog):
 
     def on_timers_update(self):
         if wx.IsMainThread():
+            # This check is needed because this method can be indirectly called from
+            # the main (ui) thread,and from the manager thread.
             self.refresh_timer_list()
         else:
             wx.CallAfter(self.refresh_timer_list)

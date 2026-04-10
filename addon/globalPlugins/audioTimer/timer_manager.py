@@ -21,12 +21,13 @@ class TimerManager:
 
     def __init__(self, config: TimerRepository):
         self._config = config
-        self.timers = [Timer(config) for config in config.get_timers()]
+        self.timers = [Timer(config, self) for config in config.get_timers()]
         self._run_thread = None
         self._event = threading.Event()
         self._lock = threading.Lock()
         self._terminate = False
         self._update_callbacks = set()
+        self.last_input_timestamp = time.time()
 
     def start(self):
         if self._run_thread is not None:
@@ -97,7 +98,7 @@ class TimerManager:
 
     @_with_lock
     def add_timer(self, timer: TimerSchema):
-        new_timer = Timer(timer)
+        new_timer = Timer(timer, self)
         new_timer.reset()
         self._config.add_timer(timer)
         self.timers.append(new_timer)
@@ -153,3 +154,6 @@ class TimerManager:
             if name not in names:
                 return name
             n += 1
+
+    def handle_input(self):
+        self.last_input_timestamp = time.time()

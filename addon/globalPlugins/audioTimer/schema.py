@@ -19,9 +19,14 @@ class TimerSchema:
     finish_time: float = 0
     repeat_count: int = 0
     recurrent_notification_time: float = 0
+    recurrent_notification_repeat_limit_after_input: int = 0
+    recurrent_notification_repeat_count_after_input: int = 0
+    recurrent_notification_last_input_timestamp: float = 0
     notification_sound: str = ""
 
     def __post_init__(self):
+        # Enum attributes converted to values (strings) after initialization,
+        # so we need to convert them back to the actual enums.
         for attr_name, attr_type in self.__annotations__.items():
             # Unions are not classes, so we need to check if it's a class
             if isclass(attr_type) and issubclass(attr_type, Enum):

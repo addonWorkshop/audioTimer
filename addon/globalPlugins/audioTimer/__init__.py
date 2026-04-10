@@ -4,6 +4,7 @@ from pathlib import Path
 import addonHandler
 import globalPluginHandler
 import gui
+import inputCore
 import NVDAState
 from scriptHandler import getLastScriptRepeatCount, script
 from ui import message
@@ -30,9 +31,21 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.timer_manager = TimerManager(self.config)
         self.timer_manager.start()
         self._last_nearest_timer = None
+        self._register()
 
     def terminate(self):
         self.timer_manager.stop()
+        self._unregister()
+
+    def _register(self):
+        inputCore.decide_handleRawKey.register(self._decide_handle_raw_key)
+
+    def _unregister(self):
+        inputCore.decide_handleRawKey.unregister(self._decide_handle_raw_key)
+
+    def _decide_handle_raw_key(self, vkCode, scanCode, extended, pressed):
+        self.timer_manager.handle_input()
+        return True
 
     @script(description=_("Open main window"))
     def script_show_dialog(self, gesture):

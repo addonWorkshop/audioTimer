@@ -1,16 +1,21 @@
 import time
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from .enums import NotificationType, RestartPolicy, TimerFinishAction, TimerState
 from .schema import TimerSchema
 from .utils import play_sound
 
+if TYPE_CHECKING:
+    from .timer_manager import TimerManager
+
 DEFAULT_NOTIFICATION_SOUND = Path(__file__).parent / "sound.wav"
 
 
 class Timer:
-    def __init__(self, config: TimerSchema):
+    def __init__(self, config: TimerSchema, manager: "TimerManager"):
         self.config = config
+        self.manager = manager
 
     @property
     def enabled(self):
@@ -123,6 +128,10 @@ class Timer:
             # Recurrent notification could be already active,
             # but we should notify about timer round explicitly.
             self._notify_once(timestamp)
+            self.config.recurrent_notification_repeat_count_after_input = 1
+            self.config.recurrent_notification_last_input_timestamp = (
+                self.manager.last_input_timestamp
+            )
             if new_state is TimerState.DISABLED:
                 new_state = TimerState.PENDING
             if not self.recurrent_notification_active:
@@ -154,7 +163,20 @@ class Timer:
             and timestamp >= self.config.recurrent_notification_time
         ):
             return
-        self._notify()
+        if (
+            self.manager.last_input_timestamp
+            > self.config.recurrent_notification_last_input_timestamp
+        ):
+            self.config.recurrent_notification_repeat_count_after_input = 0
+            self.config.recurrent_notification_last_input_timestamp = (
+                self.manager.last_input_timestamp
+            )
+        if self.config.recurrent_notification_repeat_limit_after_input == 0 or (
+            self.config.recurrent_notification_repeat_count_after_input
+            < self.config.recurrent_notification_repeat_limit_after_input
+        ):
+            self._notify()
+        self.config.recurrent_notification_repeat_count_after_input += 1
         self.config.recurrent_notification_time = (
             timestamp + self.config.recurrent_notification_interval
         )

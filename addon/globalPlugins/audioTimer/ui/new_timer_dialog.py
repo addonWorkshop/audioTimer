@@ -43,6 +43,14 @@ class NewTimerDialog(wx.Dialog):
         self.recurrent_notification_interval_field = self.main_sizer.addLabeledControl(
             _("Recurrent notification interval (in seconds)"), wx.SpinCtrl, min=1
         )
+        self.recurrent_notification_limit_after_input_field = (
+            self.main_sizer.addLabeledControl(
+                _("Recurrent notification limit after keyboard input (0 unlimited)"),
+                wx.SpinCtrl,
+                min=0,
+                max=MAX_SIZE,
+            )
+        )
         self.restart_policy_choice = self.main_sizer.addLabeledControl(
             _("Restart"), wx.Choice
         )
@@ -75,11 +83,12 @@ class NewTimerDialog(wx.Dialog):
         notification_type = self.notification_type_choice.GetClientData(
             self.notification_type_choice.GetSelection()
         )
-        (
+        if notification_type is NotificationType.RECURRENT:
+            self.recurrent_notification_interval_field.Show()
+            self.recurrent_notification_limit_after_input_field.Show()
+        else:
             self.recurrent_notification_interval_field.Hide()
-            if notification_type is not NotificationType.RECURRENT
-            else self.recurrent_notification_interval_field.Show()
-        )
+            self.recurrent_notification_limit_after_input_field.Hide()
 
     def on_repeat_limit_changed(self, event):
         self.refresh()
@@ -113,6 +122,11 @@ class NewTimerDialog(wx.Dialog):
             if notification_type == NotificationType.RECURRENT
             else 0
         )
+        recurrent_notification_repeat_limit_after_input = (
+            self.recurrent_notification_limit_after_input_field.GetValue()
+            if notification_type == NotificationType.RECURRENT
+            else 0
+        )
         restart_policy = self.restart_policy_choice.GetClientData(
             self.restart_policy_choice.GetSelection()
         )
@@ -123,6 +137,7 @@ class NewTimerDialog(wx.Dialog):
             finish_action=finish_action,
             notification_type=notification_type,
             recurrent_notification_interval=recurrent_notification_interval,
+            recurrent_notification_repeat_limit_after_input=recurrent_notification_repeat_limit_after_input,
             restart_policy=restart_policy,
         )
         self.timer_manager.add_timer(new_timer)
