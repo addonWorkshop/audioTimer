@@ -1,25 +1,18 @@
 import dataclasses
 import json
-from copy import deepcopy
 from pathlib import Path
 
+from .config.config import load_config, save_config
 from .schema import TimerSchema
-
-INITIAL_CONFIG = {"schema_version": 1, "next_timer_id": 1, "timers": []}
 
 
 class TimerRepository:
     def __init__(self, config_path: Path):
         self._config_path = config_path
-        if self._config_path.is_file():
-            with self._config_path.open("rb") as f:
-                self._config = json.load(f)
-        else:
-            self._config = deepcopy(INITIAL_CONFIG)
+        self._config = load_config(self._config_path)
 
     def save(self):
-        data = json.dumps(self._config, indent=2, ensure_ascii=False).encode()
-        self._config_path.write_bytes(data)
+        save_config(self._config_path, self._config)
 
     def get_timers(self):
         return [TimerSchema(**t) for t in self._config["timers"]]
