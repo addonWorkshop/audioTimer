@@ -6,6 +6,7 @@ import globalPluginHandler
 import gui
 import inputCore
 import NVDAState
+from keyboardHandler import KeyboardInputGesture
 from scriptHandler import getLastScriptRepeatCount, script
 from ui import message
 
@@ -44,7 +45,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         inputCore.decide_handleRawKey.unregister(self._decide_handle_raw_key)
 
     def _decide_handle_raw_key(self, vkCode, scanCode, extended, pressed):
-        self.timer_manager.handle_input()
+        if not pressed:
+            return True
+        gesture = KeyboardInputGesture(set(), vkCode, scanCode, extended)
+        self.timer_manager.handle_input(gesture.mainKeyName)
         return True
 
     @script(description=_("Open main window"))

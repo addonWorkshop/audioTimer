@@ -155,5 +155,7 @@ class TimerManager:
                 return name
             n += 1
 
-    def handle_input(self):
+    def handle_input(self, key_name: str):
+        if key_name in self._config.ignored_keys:
+            return
         self.last_input_timestamp = time.time()

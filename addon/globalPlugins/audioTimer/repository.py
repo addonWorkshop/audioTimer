@@ -35,3 +35,7 @@ class TimerRepository:
                 self._config["timers"][i] = dataclasses.asdict(timer)
                 return
         raise ValueError(f"Timer with id {timer.id} not found")
+
+    @property
+    def ignored_keys(self):
+        return self._config["ignored_keys"]

@@ -4,7 +4,12 @@ from pathlib import Path
 
 from .migrations import migrations
 
-INITIAL_CONFIG = {"schema_version": 1, "next_timer_id": 1, "timers": []}
+INITIAL_CONFIG = {
+    "schema_version": 2,
+    "next_timer_id": 1,
+    "timers": [],
+    "ignored_keys": [],
+}
 
 
 def load_config(config_path: Path):
